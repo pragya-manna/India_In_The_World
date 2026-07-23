@@ -25,7 +25,7 @@ export function HomePage() {
         supabase.from('categories').select('*').order('display_order'),
         supabase.from('countries').select('*').order('name'),
         supabase.from('indicators').select('*').order('display_order'),
-        supabase.from('rankings').select('*'),
+        supabase.from('rankings').select('*').eq('country_id', 'IN'),
         supabase.from('ai_insights').select('*'),
       ]);
       setCategories(cats || []);

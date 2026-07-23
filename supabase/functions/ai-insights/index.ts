@@ -10,8 +10,7 @@ const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
 const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-// Check if OpenAI key is available
-const openaiKey = Deno.env.get("OPENAI_API_KEY");
+const openrouterKey = Deno.env.get("OPENROUTER_API_KEY");
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -75,8 +74,7 @@ ${(indicators || []).map((i) => `- ${i.name} (${i.unit})`).join("\n")}
 
     let content: string;
 
-    if (openaiKey) {
-      // Use OpenAI if key is configured
+    if (openrouterKey) {
       const systemPrompt = `You are an expert analyst on India's global rankings. You analyze data from international indices (UN, World Bank, IMF, WHO, etc.) and provide clear, insightful summaries. Be concise but informative. Use data points when available. Respond in a professional but accessible tone.`;
 
       const userPrompt = `${prompt}
@@ -86,14 +84,16 @@ ${context}
 
 Provide a clear, data-driven insight about India's performance. Include specific numbers and rankings when available. Suggest areas for improvement if relevant.`;
 
-      const openaiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+      const openrouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${openaiKey}`,
+          Authorization: `Bearer ${openrouterKey}`,
+          "HTTP-Referer": "https://india-in-the-world.app",
+          "X-Title": "India in the World Dashboard",
         },
         body: JSON.stringify({
-          model: "gpt-4o-mini",
+          model: "meta-llama/llama-3.1-8b-instruct:free",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },
@@ -103,14 +103,13 @@ Provide a clear, data-driven insight about India's performance. Include specific
         }),
       });
 
-      if (!openaiResponse.ok) {
-        throw new Error(`OpenAI API returned ${openaiResponse.status}`);
+      if (!openrouterResponse.ok) {
+        throw new Error(`OpenRouter API returned ${openrouterResponse.status}`);
       }
 
-      const openaiData = await openaiResponse.json();
-      content = openaiData.choices?.[0]?.message?.content || "Unable to generate insight.";
+      const openrouterData = await openrouterResponse.json();
+      content = openrouterData.choices?.[0]?.message?.content || "Unable to generate insight.";
     } else {
-      // Fallback: generate a rule-based insight from the data
       content = generateFallbackInsight(prompt, context, indicator_id, category_id);
     }
 
@@ -121,12 +120,12 @@ Provide a clear, data-driven insight about India's performance. Include specific
         category_id: category_id || null,
         insight_type: insight_type || "summary",
         content,
-        model: openaiKey ? "gpt-4o-mini" : "rule-based",
+        model: openrouterKey ? "meta-llama/llama-3.1-8b-instruct:free" : "rule-based",
       });
     }
 
     return new Response(
-      JSON.stringify({ success: true, content, model: openaiKey ? "gpt-4o-mini" : "rule-based" }),
+      JSON.stringify({ success: true, content, model: openrouterKey ? "meta-llama/llama-3.1-8b-instruct:free" : "rule-based" }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {

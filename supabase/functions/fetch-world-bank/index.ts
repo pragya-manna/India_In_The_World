@@ -31,6 +31,14 @@ const worldBankIndicatorMap: Record<string, string> = {
   gini: "SI.POV.GINI",
   urbanization_rate: "SP.URB.TOTL.IN.ZS",
   patents_per_million: "IP.PAT.RESD",
+  corruption_control: "CC.EST",
+  rule_of_law: "RL.EST",
+  government_effectiveness: "GE.EST",
+  regulatory_quality: "RQ.EST",
+  political_stability: "PV.EST",
+  voice_accountability: "VA.EST",
+  primary_enrollment: "SE.PRM.ENRR",
+  education_expenditure: "SE.XPD.TOTL.GD.ZS",
 };
 
 // ISO2 -> our country ID mapping (most are identical)
@@ -105,12 +113,17 @@ Deno.serve(async (req: Request) => {
       value: number;
     }[] = [];
 
+    let skippedAggregates = 0;
     for (const record of records) {
       const wbCountryCode = record.country?.id;
-      const ourCountryId = iso2ToId[wbCountryCode] || wbCountryCode;
+      const ourCountryId = iso2ToId[wbCountryCode];
       const year = parseInt(record.date);
       const value = record.value;
 
+      if (!ourCountryId) {
+        skippedAggregates++;
+        continue; // World Bank region/income-group aggregates we don't track
+      }
       if (value !== null && !isNaN(Number(value))) {
         rankingsToUpsert.push({
           indicator_id: indicatorId,
@@ -123,6 +136,7 @@ Deno.serve(async (req: Request) => {
 
     // Upsert in batches
     let upserted = 0;
+    const batchErrors: string[] = [];
     const batchSize = 500;
     for (let i = 0; i < rankingsToUpsert.length; i += batchSize) {
       const batch = rankingsToUpsert.slice(i, i + batchSize);
@@ -131,6 +145,7 @@ Deno.serve(async (req: Request) => {
         .upsert(batch, { onConflict: "indicator_id,country_id,year" });
       if (error) {
         console.error("Upsert error:", error);
+        batchErrors.push(error.message);
       } else {
         upserted += batch.length;
       }
@@ -143,13 +158,27 @@ Deno.serve(async (req: Request) => {
       indicator?.higher_is_better ? b.value - a.value : a.value - b.value
     );
 
-    for (let i = 0; i < sorted.length; i++) {
-      await supabase
-        .from("rankings")
-        .update({ rank: i + 1 })
-        .eq("indicator_id", indicatorId)
-        .eq("country_id", sorted[i].country_id)
-        .eq("year", latestYear);
+    // Batch update ranks in one call instead of ~230 sequential calls
+    // (the old one-by-one loop was causing timeouts on larger indicators)
+    const rankUpdates = sorted.map((item, i) => ({
+      indicator_id: indicatorId,
+      country_id: item.country_id,
+      year: latestYear,
+      value: item.value,
+      rank: i + 1,
+    }));
+
+    if (rankUpdates.length > 0) {
+      const rankBatchSize = 500;
+      for (let i = 0; i < rankUpdates.length; i += rankBatchSize) {
+        const batch = rankUpdates.slice(i, i + rankBatchSize);
+        const { error: rankError } = await supabase
+          .from("rankings")
+          .upsert(batch, { onConflict: "indicator_id,country_id,year" });
+        if (rankError) {
+          console.error("Rank batch upsert error:", rankError);
+        }
+      }
     }
 
     return new Response(
@@ -159,6 +188,8 @@ Deno.serve(async (req: Request) => {
         world_bank_code: wbCode,
         fetched: rankingsToUpsert.length,
         upserted,
+        skipped_aggregates: skippedAggregates,
+        batch_errors: batchErrors,
         latest_year: latestYear,
         ranked: sorted.length,
       }),

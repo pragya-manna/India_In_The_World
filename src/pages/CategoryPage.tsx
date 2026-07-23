@@ -31,7 +31,7 @@ export function CategoryPage() {
       if (cat) {
         const [{ data: inds }, { data: ranks }, { data: srcs }] = await Promise.all([
           supabase.from('indicators').select('*').eq('category_id', cat.id).order('display_order'),
-          supabase.from('rankings').select('*'),
+          supabase.from('rankings').select('*').eq('country_id', 'IN'),
           supabase.from('sources').select('*'),
         ]);
         setIndicators(inds || []);

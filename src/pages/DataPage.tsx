@@ -71,7 +71,7 @@ export function DataPage() {
      'unemployment', 'public_debt_gdp', 'rd_expenditure', 'internet_penetration',
      'life_expectancy', 'infant_mortality', 'forest_cover', 'renewable_energy',
      'co2_per_capita', 'literacy_rate', 'female_labor', 'gini', 'urbanization_rate',
-     'patents_per_million'].includes(i.id)
+     'patents_per_million', 'corruption_control', 'rule_of_law', 'government_effectiveness', 'regulatory_quality', 'political_stability', 'voice_accountability', 'primary_enrollment', 'education_expenditure'].includes(i.id)
   );
 
   const fetchSingleIndicator = useCallback(async (indicatorId: string) => {

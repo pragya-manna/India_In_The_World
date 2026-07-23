@@ -22,7 +22,7 @@ export function DashboardPage() {
       const [{ data: cats }, { data: inds }, { data: ranks }, { data: srcs }, { data: ctrs }] = await Promise.all([
         supabase.from('categories').select('*').order('display_order'),
         supabase.from('indicators').select('*').order('display_order'),
-        supabase.from('rankings').select('*'),
+        supabase.from('rankings').select('*').eq('country_id', 'IN'),
         supabase.from('sources').select('*'),
         supabase.from('countries').select('*').order('name'),
       ]);

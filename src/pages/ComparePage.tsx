@@ -28,7 +28,7 @@ export function ComparePage() {
         supabase.from('countries').select('*').order('name'),
         supabase.from('indicators').select('*').order('display_order'),
         supabase.from('categories').select('*').order('display_order'),
-        supabase.from('rankings').select('*'),
+        supabase.from('rankings').select('*').in('country_id', selected),
       ]);
       setCountries(ctrs || []);
       setIndicators(inds || []);
@@ -36,7 +36,7 @@ export function ComparePage() {
       setRankings(ranks || []);
       setLoading(false);
     })();
-  }, []);
+  }, [selected]);   // <-- changed from []
 
   const currentIndicator = indicators.find((i) => i.id === indicatorId);
   const currentCategory = categories.find((c) => c.id === currentIndicator?.category_id);
