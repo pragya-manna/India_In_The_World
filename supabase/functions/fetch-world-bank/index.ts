@@ -63,7 +63,9 @@ Deno.serve(async (req: Request) => {
     }
 
     // Fetch from World Bank API
-    const wbUrl = `https://api.worldbank.org/v2/country/${countryCode}/indicator/${wbCode}?format=json&per_page=10000&date=-${years}`;
+    const currentYear = new Date().getFullYear();
+    const startYear = currentYear - Number(years);
+    const wbUrl = `https://api.worldbank.org/v2/country/${countryCode}/indicator/${wbCode}?format=json&per_page=10000&date=${startYear}:${currentYear}`;
     console.log("Fetching:", wbUrl);
 
     const wbResponse = await fetch(wbUrl);
