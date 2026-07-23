@@ -31,6 +31,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showMusicTip, setShowMusicTip] = useState(true);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -46,6 +47,32 @@ export function Navbar() {
         className="fixed top-0 left-0 right-0 z-40 transition-all duration-500"
         style={scrolled ? { background: 'var(--nav-bg-scrolled)', backdropFilter: 'blur(20px)', boxShadow: '0 4px 20px rgba(0,0,0,0.08)' } : undefined}
       >
+        {showMusicTip && (
+          <div className="fixed top-20 right-4 z-50 w-72 rounded-2xl border border-saffron-500/30 bg-[#101827]/95 p-4 shadow-2xl backdrop-blur-md">
+            <button
+              onClick={() => setShowMusicTip(false)}
+              className="absolute right-3 top-2 text-lg text-white/60 hover:text-white"
+              aria-label="Close message"
+            >
+              ×
+            </button>
+
+            <p className="pr-5 text-sm font-semibold text-white">
+              Begin with the spirit of Bharat 🇮🇳
+            </p>
+            <p className="mt-1 text-xs leading-relaxed text-white/70">
+              Tap the <span className="text-saffron-500">Vande Mataram</span> button
+              above to listen to India’s national song.
+            </p>
+
+            <button
+              onClick={() => setShowMusicTip(false)}
+              className="mt-3 w-full rounded-lg bg-saffron-500 px-3 py-2 text-xs font-semibold text-white hover:bg-saffron-600"
+            >
+              Got it
+            </button>
+          </div>
+        )}
         {/* Top india stripe */}
         <div className="india-stripe w-full" />
 
@@ -88,11 +115,10 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   to={link.href}
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${
-                    active
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 flex items-center gap-1.5 ${active
                       ? 'bg-saffron-500/20 text-saffron-500'
                       : 'text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/10'
-                  }`}
+                    }`}
                 >
                   <link.icon size={14} />
                   {link.label}
@@ -165,11 +191,10 @@ export function Navbar() {
                     key={link.href}
                     to={link.href}
                     onClick={() => setMobileOpen(false)}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                      active
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${active
                         ? 'bg-saffron-500/20 text-saffron-500'
                         : 'text-secondary hover:text-primary hover:bg-black/5 dark:hover:bg-white/10'
-                    }`}
+                      }`}
                   >
                     <link.icon size={16} />
                     {link.label}

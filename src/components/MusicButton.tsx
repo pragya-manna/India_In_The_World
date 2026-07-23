@@ -79,7 +79,7 @@ function MusicPopup({ onClose }: MusicPopupProps) {
         </button>
 
         <p className="text-muted text-xs text-center mt-4">
-          Note: Audio playback requires a local audio file at /audio/vande-mataram.mp3
+          Where every heartbeat says: Vande Mataram.
         </p>
 
         {playing && (
