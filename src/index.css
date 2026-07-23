@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Theme Variables ── */
+:root {
+  --saffron: #FF9933;
+  --india-green: #138808;
+  --india-navy: #000080;
+
+  /* Light mode (default) */
+  --bg-base: #f8f6f2;
+  --bg-surface: #ffffff;
+  --bg-elevated: #ffffff;
+  --text-primary: #1a1a2e;
+  --text-secondary: #4a4a5e;
+  --text-muted: #8a8a9a;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-card-bg: rgba(255, 255, 255, 0.75);
+  --glass-card-border: rgba(0, 0, 0, 0.08);
+  --glass-card-hover-bg: rgba(255, 255, 255, 0.9);
+  --glass-card-hover-border: rgba(255, 153, 51, 0.35);
+  --glass-card-hover-shadow: 0 20px 60px rgba(0, 0, 0, 0.08), 0 0 30px rgba(255, 153, 51, 0.08);
+  --input-bg: rgba(0, 0, 0, 0.04);
+  --input-border: rgba(0, 0, 0, 0.1);
+  --chart-grid: rgba(0, 0, 0, 0.06);
+  --chart-axis: rgba(0, 0, 0, 0.4);
+  --skeleton-from: rgba(0, 0, 0, 0.04);
+  --skeleton-to: rgba(0, 0, 0, 0.1);
+  --blob-opacity: 0.25;
+  --flag-overlay-from: rgba(255, 255, 255, 0.5);
+  --flag-overlay-via: rgba(255, 255, 255, 0.3);
+  --flag-overlay-to: rgba(255, 255, 255, 0.5);
+  --nav-bg-scrolled: rgba(255, 255, 255, 0.9);
+  --footer-border: rgba(0, 0, 0, 0.08);
+
+  scroll-behavior: smooth;
+}
+
+.dark {
+  --bg-base: #060912;
+  --bg-surface: #0a0d18;
+  --bg-elevated: #0e111e;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --glass-bg: rgba(10, 13, 24, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-card-bg: rgba(255, 255, 255, 0.07);
+  --glass-card-border: rgba(255, 255, 255, 0.12);
+  --glass-card-hover-bg: rgba(255, 255, 255, 0.12);
+  --glass-card-hover-border: rgba(255, 153, 51, 0.4);
+  --glass-card-hover-shadow: 0 20px 60px rgba(0, 0, 0, 0.3), 0 0 30px rgba(255, 153, 51, 0.1);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.1);
+  --chart-grid: rgba(255, 255, 255, 0.05);
+  --chart-axis: rgba(255, 255, 255, 0.4);
+  --skeleton-from: rgba(255, 255, 255, 0.03);
+  --skeleton-to: rgba(255, 255, 255, 0.08);
+  --blob-opacity: 0.12;
+  --flag-overlay-from: rgba(0, 0, 0, 0.6);
+  --flag-overlay-via: rgba(0, 0, 0, 0.4);
+  --flag-overlay-to: rgba(0, 0, 0, 0.7);
+  --nav-bg-scrolled: rgba(10, 13, 24, 0.8);
+  --footer-border: rgba(255, 255, 255, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  transition: background 0.4s ease, color 0.4s ease;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(to bottom, #FF9933, #138808);
+  border-radius: 3px;
+}
+
+/* ── Glassmorphism ── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-dark {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+}
+
+.glass-card {
+  background: var(--glass-card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-card-border);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: var(--glass-card-hover-bg);
+  border-color: var(--glass-card-hover-border);
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--glass-card-hover-shadow);
+}
+
+/* ── Gradient Text ── */
+.gradient-text-saffron {
+  background: linear-gradient(135deg, #FF9933 0%, #FFB347 40%, #FF6600 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: gradientShift 3s ease infinite;
+}
+
+.gradient-text-tricolor {
+  background: linear-gradient(90deg, #FF9933, #1a1a2e, #138808);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: gradientShift 4s ease infinite;
+}
+
+.dark .gradient-text-tricolor {
+  background: linear-gradient(90deg, #FF9933, #FFFFFF, #138808);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: gradientShift 4s ease infinite;
+}
+
+/* ── Shine Button ── */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-shine::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -75%;
+  width: 50%;
+  height: 200%;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+  transform: skewX(-25deg);
+  transition: left 0.5s ease;
+}
+
+.btn-shine:hover::before {
+  left: 125%;
+}
+
+/* ── 3D Card Flip ── */
+.flip-card { perspective: 1000px; }
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.7s cubic-bezier(0.4,0.2,0.2,1);
+  transform-style: preserve-3d;
+}
+.flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-card-back { transform: rotateY(180deg); }
+
+/* ── Skeleton Shimmer ── */
+.skeleton {
+  background: linear-gradient(90deg, var(--skeleton-from) 25%, var(--skeleton-to) 37%, var(--skeleton-from) 63%);
+  background-size: 400% 100%;
+  animation: shimmer 1.4s ease infinite;
+}
+
+/* ── Cursor Glow ── */
+.cursor-glow {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: rgba(255,153,51,0.8);
+  box-shadow: 0 0 20px rgba(255,153,51,0.6), 0 0 40px rgba(255,153,51,0.3);
+  pointer-events: none;
+  position: fixed;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s ease, width 0.2s ease, height 0.2s ease;
+  mix-blend-mode: screen;
+}
+
+.cursor-trail {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,153,51,0.4);
+  pointer-events: none;
+  position: fixed;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+
+/* ── Parallax ── */
+.parallax-section { will-change: transform; }
+
+/* ── Morphing Blob ── */
+.morph-blob {
+  animation: morph 8s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}
+
+/* ── Ticker ── */
+.ticker-wrapper { overflow: hidden; }
+.ticker-track {
+  display: flex;
+  white-space: nowrap;
+  animation: ticker 40s linear infinite;
+}
+
+/* ── Chart tooltip ── */
+.recharts-tooltip-wrapper { z-index: 1000; }
+
+/* ── Page transition ── */
+.page-enter { opacity: 0; transform: translateY(20px); }
+.page-enter-active { opacity: 1; transform: translateY(0); transition: opacity 400ms, transform 400ms; }
+.page-exit { opacity: 1; }
+.page-exit-active { opacity: 0; transition: opacity 300ms; }
+
+/* ── Scroll reveal (JS controlled) ── */
+.reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-left { opacity: 0; transform: translateX(-40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right { opacity: 0; transform: translateX(40px); transition: opacity 0.7s ease, transform 0.7s ease; }
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+.reveal-scale { opacity: 0; transform: scale(0.85); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+/* ── SVG Line draw ── */
+.svg-line-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  transition: stroke-dashoffset 2s ease;
+}
+.svg-line-path.drawn { stroke-dashoffset: 0; }
+
+/* ── Tilt card ── */
+.tilt-card { transform-style: preserve-3d; transition: transform 0.3s ease; }
+
+/* ── Flag wave SVG ── */
+.flag-wave {
+  filter: drop-shadow(0 4px 24px rgba(0,0,0,0.15));
+}
+
+/* ── Score ring ── */
+.score-ring-bg { stroke: var(--glass-card-border); }
+.score-ring-fill { stroke-linecap: round; transition: stroke-dashoffset 1.5s cubic-bezier(0.4,0,0.2,1); }
+
+/* ── Magnetic button (JS controlled) ── */
+.magnetic { transition: transform 0.3s cubic-bezier(0.23,1,0.32,1); }
+
+/* ── India stripe decorators ── */
+.india-stripe {
+  background: linear-gradient(90deg, #FF9933, #FF9933 33%, #FFFFFF 33%, #FFFFFF 66%, #138808 66%);
+  height: 3px;
+}
+
+/* ── Theme utility classes ── */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.bg-base { background: var(--bg-base); }
+.bg-surface { background: var(--bg-surface); }
+.bg-elevated { background: var(--bg-elevated); }
+
+/* ── Flag overlay ── */
+.flag-overlay {
+  background: linear-gradient(to bottom, var(--flag-overlay-from), var(--flag-overlay-via), var(--flag-overlay-to));
+}
