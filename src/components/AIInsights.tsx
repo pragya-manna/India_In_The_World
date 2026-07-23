@@ -23,46 +23,59 @@ export function AIInsights({ insights, indicators, categories }: AIInsightsProps
   useMagneticButton(sendRef);
 
   const handleSend = async () => {
-    if (!input.trim() || loading) return;
-    const userMsg = input.trim();
-    setMessages((m) => [...m, { role: 'user', content: userMsg }]);
-    setInput('');
-    setLoading(true);
+  if (!input.trim() || loading) return;
 
-    // Simulate AI response using available insights
-    await new Promise((r) => setTimeout(r, 800));
+  const userMsg = input.trim();
+  setMessages((messages) => [
+    ...messages,
+    { role: 'user', content: userMsg },
+  ]);
+  setInput('');
+  setLoading(true);
 
-    const lower = userMsg.toLowerCase();
-    let response = '';
+  try {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-    // Match keywords to insights
-    const matchedInsight = insights.find((ins) => {
-      const ind = indicators.find((i) => i.id === ins.indicator_id);
-      const cat = categories.find((c) => c.id === ins.category_id);
-      const text = `${ind?.name || ''} ${cat?.name || ''} ${ins.content}`.toLowerCase();
-      return lower.split(' ').some((w) => w.length > 3 && text.includes(w));
-    });
-
-    if (matchedInsight) {
-      response = matchedInsight.content;
-    } else if (lower.includes('report card') || lower.includes('annual')) {
-      const cat = categories.find((c) => lower.includes(c.slug) || lower.includes(c.name.toLowerCase()));
-      if (cat) {
-        const catInsights = insights.filter((i) => i.category_id === cat.id);
-        response = `📊 Annual Report Card: ${cat.name}\n\n${catInsights.map((i) => `• ${i.content}`).join('\n\n') || 'No specific insights available yet for this category.'}\n\nOverall: India shows mixed performance in ${cat.name}. See detailed indicators for more.`;
-      } else {
-        response = `📊 India Annual Report Card\n\n${insights.map((i) => `• ${i.content}`).join('\n\n')}`;
+    const apiResponse = await fetch(
+      `${supabaseUrl}/functions/v1/ai-insights`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${anonKey}`,
+        },
+        body: JSON.stringify({
+          prompt: userMsg,
+          save: false,
+        }),
       }
-    } else if (lower.includes('improve') || lower.includes('weak') || lower.includes('area')) {
-      response = "India's key areas for improvement based on global rankings:\n\n• Environmental Performance (168th) - air quality and emissions need urgent attention\n• Gender Gap (129th) - women's economic participation is low\n• Happiness (126th) - quality of life and social support need strengthening\n• HDI (134th) - health and education access remain priorities\n\nIndia's strengths: GDP growth (#1), GDP PPP rank (#3), Innovation (#39 among emerging economies).";
-    } else {
-      response =
-        "I can help you understand India's global rankings. Here are some things you can ask:\n\n• 'Show India's HDI trend'\n• 'How is India's innovation ranking?'\n• 'Generate a report card for Economy'\n• 'Where should India improve?'\n• 'Compare India with China'";
+    );
+
+    const data = await apiResponse.json();
+
+    if (!apiResponse.ok) {
+      throw new Error(data.error || `HTTP ${apiResponse.status}`);
     }
 
-    setMessages((m) => [...m, { role: 'ai', content: response }]);
+    setMessages((messages) => [
+      ...messages,
+      { role: 'ai', content: data.content || 'No answer received.' },
+    ]);
+  } catch (error) {
+    setMessages((messages) => [
+      ...messages,
+      {
+        role: 'ai',
+        content: `Sorry, I could not get an answer: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      },
+    ]);
+  } finally {
     setLoading(false);
-  };
+  }
+};
 
   return (
     <section className="py-20 px-4 max-w-screen-xl mx-auto">
@@ -95,18 +108,16 @@ export function AIInsights({ insights, indicators, categories }: AIInsightsProps
                 className={`flex gap-3 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
               >
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    msg.role === 'user' ? 'bg-saffron-500/20 text-saffron-400' : 'bg-india-navy/30 text-blue-300'
-                  }`}
+                  className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${msg.role === 'user' ? 'bg-saffron-500/20 text-saffron-400' : 'bg-india-navy/30 text-blue-300'
+                    }`}
                 >
                   {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                 </div>
                 <div
-                  className={`max-w-md rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${
-                    msg.role === 'user'
+                  className={`max-w-md rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${msg.role === 'user'
                       ? 'bg-saffron-500/20 text-primary rounded-tr-sm'
                       : 'glass text-secondary rounded-tl-sm'
-                  }`}
+                    }`}
                   style={msg.role === 'ai' ? { borderColor: 'var(--glass-border)' } : undefined}
                 >
                   {msg.content}

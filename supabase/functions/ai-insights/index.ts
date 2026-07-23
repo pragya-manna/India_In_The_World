@@ -75,14 +75,18 @@ ${(indicators || []).map((i) => `- ${i.name} (${i.unit})`).join("\n")}
     let content: string;
 
     if (openrouterKey) {
-      const systemPrompt = `You are an expert analyst on India's global rankings. You analyze data from international indices (UN, World Bank, IMF, WHO, etc.) and provide clear, insightful summaries. Be concise but informative. Use data points when available. Respond in a professional but accessible tone.`;
+      const systemPrompt = `You are a helpful AI assistant for the India in the World Dashboard.
+Answer the user's question directly and clearly.
+You can answer general questions about India and the world, as well as questions based on dashboard data.
+Use supplied dashboard data when relevant.
+Never invent exact rankings, dates, or statistics when data was not provided.`;
 
-      const userPrompt = `${prompt}
+      const userPrompt = `Question: ${prompt}
 
-Context data:
-${context}
+Dashboard data, if available:
+${context || "No dashboard data was selected."}
 
-Provide a clear, data-driven insight about India's performance. Include specific numbers and rankings when available. Suggest areas for improvement if relevant.`;
+Answer the question directly. Do not ask the user to provide a dataset unless the question specifically requires unavailable exact data.`;
 
       const openrouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
@@ -93,7 +97,7 @@ Provide a clear, data-driven insight about India's performance. Include specific
           "X-Title": "India in the World Dashboard",
         },
         body: JSON.stringify({
-          model: "meta-llama/llama-3.1-8b-instruct:free",
+          model: "google/gemma-4-26b-a4b-it:free",
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: userPrompt },
@@ -120,12 +124,12 @@ Provide a clear, data-driven insight about India's performance. Include specific
         category_id: category_id || null,
         insight_type: insight_type || "summary",
         content,
-        model: openrouterKey ? "meta-llama/llama-3.1-8b-instruct:free" : "rule-based",
+        model: openrouterKey ? "google/gemma-4-26b-a4b-it:free" : "rule-based",
       });
     }
 
     return new Response(
-      JSON.stringify({ success: true, content, model: openrouterKey ? "meta-llama/llama-3.1-8b-instruct:free" : "rule-based" }),
+      JSON.stringify({ success: true, content, model: openrouterKey ? "google/gemma-4-26b-a4b-it:free" : "rule-based" }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err) {
