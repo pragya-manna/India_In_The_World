@@ -71,10 +71,10 @@ export function HomePage() {
       {/* India Spotlight */}
       <section className="py-20 px-4 max-w-screen-xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="reveal font-serif text-4xl font-bold mb-3 text-primary">
+          <h2 className="font-serif text-4xl font-bold mb-3 text-primary">
             India <span className="gradient-text-saffron">Spotlight</span>
           </h2>
-          <p className="reveal text-secondary max-w-2xl mx-auto">
+          <p className="text-secondary max-w-2xl mx-auto">
             A snapshot of where India stands across key global indicators.
           </p>
         </div>
@@ -88,7 +88,7 @@ export function HomePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* GDP Growth */}
-            <div className="reveal glass-card rounded-2xl p-6 border border-saffron-500/20">
+            <div className="glass-card rounded-2xl p-6 border border-saffron-500/20">
               <h3 className="font-serif font-bold text-primary mb-1">GDP Growth Rate</h3>
               <p className="text-xs text-muted mb-4">Annual % growth</p>
               <TrendChart
@@ -102,7 +102,7 @@ export function HomePage() {
             </div>
 
             {/* HDI */}
-            <div className="reveal glass-card rounded-2xl p-6 border border-blue-500/20">
+            <div className="glass-card rounded-2xl p-6 border border-blue-500/20">
               <h3 className="font-serif font-bold text-primary mb-1">Human Development Index</h3>
               <p className="text-xs text-muted mb-4">UNDP score (0-1)</p>
               <TrendChart
@@ -116,7 +116,7 @@ export function HomePage() {
             </div>
 
             {/* Corruption */}
-            <div className="reveal glass-card rounded-2xl p-6 border border-green-500/20">
+            <div className="glass-card rounded-2xl p-6 border border-green-500/20">
               <h3 className="font-serif font-bold text-primary mb-1">Corruption Perceptions</h3>
               <p className="text-xs text-muted mb-4">Transparency International</p>
               <TrendChart
@@ -131,7 +131,7 @@ export function HomePage() {
           </div>
         )}
 
-        <div className="reveal text-center mt-10">
+        <div className="text-center mt-10">
           <Link
             to="/dashboard"
             className="btn-shine inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white transition-all"
@@ -148,7 +148,7 @@ export function HomePage() {
 
       {/* CTA */}
       <section className="py-20 px-4 max-w-4xl mx-auto text-center">
-        <div className="reveal glass-card rounded-3xl p-12 border border-saffron-500/20">
+        <div className="glass-card rounded-3xl p-12 border border-saffron-500/20">
           <Sparkles size={32} className="text-saffron-400 mx-auto mb-4" />
           <h2 className="font-serif text-3xl font-bold text-primary mb-4">
             Ready to explore India's global standing?

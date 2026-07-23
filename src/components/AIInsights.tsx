@@ -67,14 +67,14 @@ export function AIInsights({ insights, indicators, categories }: AIInsightsProps
   return (
     <section className="py-20 px-4 max-w-screen-xl mx-auto">
       <div className="text-center mb-12">
-        <div className="reveal inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-saffron-500/30 mb-4">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass border border-saffron-500/30 mb-4">
           <Sparkles size={14} className="text-saffron-500" />
           <span className="text-xs text-primary font-medium">AI-Powered</span>
         </div>
-        <h2 className="reveal font-serif text-4xl font-bold mb-3 text-primary">
+        <h2 className="font-serif text-4xl font-bold mb-3 text-primary">
           AI <span className="gradient-text-saffron">Insights</span> & Summaries
         </h2>
-        <p className="reveal text-secondary max-w-2xl mx-auto">
+        <p className="text-secondary max-w-2xl mx-auto">
           Ask questions, generate report cards, and get data-driven insights about India's global performance.
         </p>
       </div>

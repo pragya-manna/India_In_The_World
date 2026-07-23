@@ -4,7 +4,6 @@ import {
   ArrowLeft, Download, Upload, Database, RefreshCw, Plus,
   CheckCircle, XCircle, Loader2, FileText, Zap, Brain, Globe2,
 } from 'lucide-react';
-import { useScrollReveal } from '@/hooks/useAnimations';
 import {
   supabase,
   type Category, type Indicator, type Country, type Ranking,
@@ -24,7 +23,6 @@ const inputStyle = {
 } as const;
 
 export function DataPage() {
-  useScrollReveal();
   const [categories, setCategories] = useState<Category[]>([]);
   const [indicators, setIndicators] = useState<Indicator[]>([]);
   const [countries, setCountries] = useState<Country[]>([]);
@@ -223,11 +221,11 @@ export function DataPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 max-w-screen-xl mx-auto">
-      <Link to="/" className="reveal inline-flex items-center gap-2 text-sm text-secondary hover:text-primary mb-6 transition-colors">
+      <Link to="/" className="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary mb-6 transition-colors">
         <ArrowLeft size={14} /> Back
       </Link>
 
-      <div className="reveal mb-8">
+      <div className="mb-8">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border border-saffron-500/30 text-xs text-saffron-500 mb-3">
           <Database size={12} /> Data Management
         </div>
@@ -239,7 +237,7 @@ export function DataPage() {
         </p>
       </div>
 
-      <div className="reveal grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         <div className="glass-card rounded-xl p-4 text-center">
           <div className="text-2xl font-bold text-primary">{indicators.length}</div>
           <div className="text-xs text-muted">Indicators</div>
@@ -258,7 +256,7 @@ export function DataPage() {
         </div>
       </div>
 
-      <div className="reveal flex flex-wrap gap-2 mb-6">
+      <div className="flex flex-wrap gap-2 mb-6">
         {[
           { id: 'worldbank' as const, label: 'World Bank API', icon: Globe2 },
           { id: 'csv' as const, label: 'CSV Import', icon: Upload },
@@ -282,7 +280,7 @@ export function DataPage() {
 
       {/* World Bank Tab */}
       {activeTab === 'worldbank' && (
-        <div className="reveal glass-card rounded-3xl p-6">
+        <div className="glass-card rounded-3xl p-6">
           <div className="flex items-start justify-between mb-6">
             <div>
               <h3 className="font-serif font-bold text-lg text-primary mb-1">World Bank Data Fetcher</h3>
@@ -344,7 +342,7 @@ export function DataPage() {
 
       {/* CSV Import Tab */}
       {activeTab === 'csv' && (
-        <div className="reveal glass-card rounded-3xl p-6">
+        <div className="glass-card rounded-3xl p-6">
           <h3 className="font-serif font-bold text-lg text-primary mb-1">CSV Import</h3>
           <p className="text-sm text-muted mb-6">
             Upload a CSV file with ranking data. Expected format: <code className="text-saffron-500">indicator_id, country_id, year, value, rank</code>
@@ -446,7 +444,7 @@ export function DataPage() {
 
       {/* Manual Entry Tab */}
       {activeTab === 'manual' && (
-        <div className="reveal glass-card rounded-3xl p-6">
+        <div className="glass-card rounded-3xl p-6">
           <h3 className="font-serif font-bold text-lg text-primary mb-1">Manual Data Entry</h3>
           <p className="text-sm text-muted mb-6">Add individual ranking records directly.</p>
 
@@ -534,7 +532,7 @@ export function DataPage() {
 
       {/* AI Insights Tab */}
       {activeTab === 'ai' && (
-        <div className="reveal glass-card rounded-3xl p-6">
+        <div className="glass-card rounded-3xl p-6">
           <h3 className="font-serif font-bold text-lg text-primary mb-1">AI Insight Generator</h3>
           <p className="text-sm text-muted mb-6">
             Generate AI-powered insights from your data. Uses OpenAI if configured, otherwise generates rule-based summaries.

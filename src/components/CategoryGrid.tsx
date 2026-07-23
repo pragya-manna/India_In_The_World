@@ -16,10 +16,10 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
   return (
     <section className="py-20 px-4 max-w-screen-xl mx-auto">
       <div className="text-center mb-12">
-        <h2 className="reveal font-serif text-4xl font-bold mb-3 text-primary">
+        <h2 className="font-serif text-4xl font-bold mb-3 text-primary">
           Explore by <span className="gradient-text-saffron">Category</span>
         </h2>
-        <p className="reveal text-secondary max-w-2xl mx-auto">
+        <p className="text-secondary max-w-2xl mx-auto">
           Ten thematic areas covering economy, society, governance, technology, and more.
         </p>
       </div>
@@ -31,7 +31,7 @@ export function CategoryGrid({ categories }: { categories: Category[] }) {
             <Link
               key={cat.id}
               to={`/category/${cat.slug}`}
-              className="reveal-scale flip-card group h-44"
+              className="flip-card group h-44"
               style={{ animationDelay: `${i * 0.05}s` }}
             >
               <div className="flip-card-inner">
