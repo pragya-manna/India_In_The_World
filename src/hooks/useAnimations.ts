@@ -1,20 +1,35 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect } from 'react';
 
 export function useScrollReveal() {
   useEffect(() => {
-    const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.classList.add('visible');
-          }
-        });
-      },
-      { threshold: 0.12 }
-    );
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    const observe = () => {
+      const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add('visible');
+              observer.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0 }
+      );
+      els.forEach((el) => observer.observe(el));
+      return observer;
+    };
+
+    // Run immediately and again after a frame to catch already-visible elements
+    const obs = observe();
+    const id = requestAnimationFrame(() => {
+      obs.disconnect();
+      observe();
+    });
+
+    return () => {
+      cancelAnimationFrame(id);
+      obs.disconnect();
+    };
   }, []);
 }
 
@@ -27,12 +42,14 @@ export function useSvgLineDraw() {
           if (e.isIntersecting) e.target.classList.add('drawn');
         });
       },
-      { threshold: 0.2 }
+      { threshold: 0 }
     );
     paths.forEach((p) => observer.observe(p));
     return () => observer.disconnect();
   }, []);
 }
+
+import { useRef, useCallback } from 'react';
 
 export function useTiltCard(ref: React.RefObject<HTMLElement | null>) {
   useEffect(() => {

@@ -82,11 +82,11 @@ export function CategoryPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 max-w-screen-xl mx-auto">
-      <Link to="/" className="reveal inline-flex items-center gap-2 text-sm text-secondary hover:text-primary mb-6 transition-colors">
+      <Link to="/" className="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary mb-6 transition-colors">
         <ArrowLeft size={14} /> Back
       </Link>
 
-      <div className="reveal mb-8">
+      <div className="mb-8">
         <div
           className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-3"
           style={{ background: `${category.color}20`, color: category.color }}
@@ -97,8 +97,8 @@ export function CategoryPage() {
         <p className="text-secondary max-w-2xl">{category.description}</p>
       </div>
 
-      <div className="reveal relative mb-8 max-w-md">
-        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+      <div className="relative mb-8 max-w-md">
+        <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}

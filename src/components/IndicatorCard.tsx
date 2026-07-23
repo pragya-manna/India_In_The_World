@@ -56,7 +56,7 @@ export function IndicatorCard({
           <button
             onClick={onToggleWatchlist}
             className={`p-1.5 rounded-lg transition-all ${
-              inWatchlist ? 'text-saffron-400 bg-saffron-500/10' : 'text-white/30 hover:text-white/60 hover:bg-white/5'
+              inWatchlist ? 'text-saffron-500 bg-saffron-500/10' : 'text-muted hover:text-primary'
             }`}
             title={inWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}
           >
@@ -77,10 +77,10 @@ export function IndicatorCard({
           <div
             className={`flex items-center gap-1 text-sm font-medium px-2 py-1 rounded-lg ${
               improved
-                ? 'text-green-400 bg-green-500/10'
+                ? 'text-green-500 bg-green-500/10'
                 : declined
-                ? 'text-red-400 bg-red-500/10'
-                : 'text-white/40 bg-white/5'
+                ? 'text-red-500 bg-red-500/10'
+                : 'text-muted bg-black/5 dark:bg-white/5'
             }`}
           >
             {improved ? <TrendingUp size={14} /> : declined ? <TrendingDown size={14} /> : <Minus size={14} />}
@@ -194,7 +194,7 @@ export function IndicatorDetail({
               >
                 <ExternalLink size={14} />
                 <span className="font-medium">{src.organization}</span>
-                <span className="text-white/40">· {src.report_name}</span>
+                <span className="text-muted">· {src.report_name}</span>
               </a>
             ))}
           </div>

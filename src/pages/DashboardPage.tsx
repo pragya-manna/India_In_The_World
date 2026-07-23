@@ -1,14 +1,12 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Search, Filter, Star, Download } from 'lucide-react';
 import { IndicatorCard } from '@/components/IndicatorCard';
-import { useScrollReveal } from '@/hooks/useAnimations';
 import {
   supabase,
   type Category, type Indicator, type Ranking, type Source, type Country,
 } from '@/lib/supabase';
 
 export function DashboardPage() {
-  useScrollReveal();
   const [categories, setCategories] = useState<Category[]>([]);
   const [indicators, setIndicators] = useState<Indicator[]>([]);
   const [rankings, setRankings] = useState<Ranking[]>([]);
@@ -37,6 +35,9 @@ export function DashboardPage() {
     })();
   }, []);
 
+  // suppress unused warning
+  void countries;
+
   const filteredIndicators = useMemo(() => {
     return indicators.filter((ind) => {
       if (activeCat !== 'all' && ind.category_id !== activeCat) return false;
@@ -45,23 +46,18 @@ export function DashboardPage() {
     });
   }, [indicators, activeCat, search]);
 
-  const getLatestRank = (indicatorId: string, countryId: string = 'IN') => {
-    const ranks = rankings
+  const getLatestRank = (indicatorId: string, countryId = 'IN') =>
+    rankings
       .filter((r) => r.indicator_id === indicatorId && r.country_id === countryId)
-      .sort((a, b) => b.year - a.year);
-    return ranks[0] || null;
-  };
+      .sort((a, b) => b.year - a.year)[0] || null;
 
-  const getPreviousRank = (indicatorId: string, countryId: string = 'IN') => {
-    const ranks = rankings
+  const getPreviousRank = (indicatorId: string, countryId = 'IN') =>
+    rankings
       .filter((r) => r.indicator_id === indicatorId && r.country_id === countryId)
-      .sort((a, b) => b.year - a.year);
-    return ranks[1] || null;
-  };
+      .sort((a, b) => b.year - a.year)[1] || null;
 
-  const getIndicatorRankings = (indicatorId: string, countryId: string = 'IN') => {
-    return rankings.filter((r) => r.indicator_id === indicatorId && r.country_id === countryId);
-  };
+  const getIndicatorRankings = (indicatorId: string, countryId = 'IN') =>
+    rankings.filter((r) => r.indicator_id === indicatorId && r.country_id === countryId);
 
   const toggleWatchlist = (id: string) => {
     setWatchlist((w) => {
@@ -91,16 +87,16 @@ export function DashboardPage() {
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 max-w-screen-xl mx-auto">
       <div className="mb-8">
-        <h1 className="reveal font-serif text-4xl font-bold text-primary mb-2">
+        <h1 className="font-serif text-4xl font-bold text-primary mb-2">
           Global <span className="gradient-text-saffron">Dashboard</span>
         </h1>
-        <p className="reveal text-secondary">India's rankings across all international indices.</p>
+        <p className="text-secondary">India's rankings across all international indices.</p>
       </div>
 
       {/* Controls */}
-      <div className="reveal flex flex-col sm:flex-row gap-3 mb-8">
+      <div className="flex flex-col sm:flex-row gap-3 mb-8">
         <div className="relative flex-1">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -119,7 +115,7 @@ export function DashboardPage() {
       </div>
 
       {/* Category filter pills */}
-      <div className="reveal flex flex-wrap gap-2 mb-8">
+      <div className="flex flex-wrap gap-2 mb-8">
         <button
           onClick={() => setActiveCat('all')}
           className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
@@ -136,9 +132,7 @@ export function DashboardPage() {
             key={cat.id}
             onClick={() => setActiveCat(cat.id)}
             className={`px-4 py-1.5 rounded-full text-xs font-medium transition-all ${
-              activeCat === cat.id
-                ? 'text-white'
-                : 'glass text-secondary hover:text-primary border'
+              activeCat === cat.id ? 'text-white' : 'glass text-secondary hover:text-primary border'
             }`}
             style={activeCat === cat.id ? { background: cat.color } : { borderColor: 'var(--glass-border)' }}
           >

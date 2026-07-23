@@ -38,10 +38,10 @@ export function InsightsPage() {
   return (
     <div className="min-h-screen">
       <div className="pt-24 pb-8 px-4 max-w-screen-xl mx-auto">
-        <Link to="/" className="reveal inline-flex items-center gap-2 text-sm text-secondary hover:text-primary mb-6 transition-colors">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary mb-6 transition-colors">
           <ArrowLeft size={14} /> Back
         </Link>
-        <div className="reveal mb-8">
+        <div className="mb-8">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass border border-saffron-500/30 text-xs text-saffron-500 mb-3">
             <Sparkles size={12} /> AI Powered
           </div>
@@ -54,7 +54,7 @@ export function InsightsPage() {
         </div>
 
         {/* Feature cards */}
-        <div className="reveal grid sm:grid-cols-3 gap-4 mb-8">
+        <div className="grid sm:grid-cols-3 gap-4 mb-8">
           <div className="glass-card rounded-2xl p-5">
             <Brain size={20} className="text-saffron-500 mb-2" />
             <h3 className="font-serif font-bold text-primary text-sm mb-1">Natural Language</h3>

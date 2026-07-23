@@ -87,11 +87,11 @@ export function ComparePage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20 px-4 max-w-screen-xl mx-auto">
-      <Link to="/" className="reveal inline-flex items-center gap-2 text-sm text-secondary hover:text-primary mb-6 transition-colors">
+      <Link to="/" className="inline-flex items-center gap-2 text-sm text-secondary hover:text-primary mb-6 transition-colors">
         <ArrowLeft size={14} /> Back
       </Link>
 
-      <div className="reveal mb-8">
+      <div className="mb-8">
         <h1 className="font-serif text-4xl font-bold text-primary mb-2">
           Country <span className="gradient-text-saffron">Comparison</span>
         </h1>
@@ -99,7 +99,7 @@ export function ComparePage() {
       </div>
 
       {/* Selected countries */}
-      <div className="reveal flex flex-wrap items-center gap-2 mb-6">
+      <div className="flex flex-wrap items-center gap-2 mb-6">
         {selected.map((cid) => {
           const c = countries.find((x) => x.id === cid);
           return (
@@ -130,7 +130,7 @@ export function ComparePage() {
 
       {/* Country picker */}
       {showPicker && (
-        <div className="reveal glass-card rounded-2xl p-4 mb-6 max-h-60 overflow-y-auto">
+        <div className="glass-card rounded-2xl p-4 mb-6 max-h-60 overflow-y-auto">
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
             {countries
               .filter((c) => !selected.includes(c.id))
@@ -150,7 +150,7 @@ export function ComparePage() {
       )}
 
       {/* Indicator selector */}
-      <div className="reveal mb-8">
+      <div className="mb-8">
         <label className="text-xs text-muted uppercase tracking-wider mb-2 block">Select Indicator</label>
         <select
           value={indicatorId}
@@ -163,7 +163,7 @@ export function ComparePage() {
               {indicators
                 .filter((i) => i.category_id === cat.id)
                 .map((i) => (
-                  <option key={i.id} value={i.id} className="bg-dark-300">
+                  <option key={i.id} value={i.id} style={{ background: 'var(--bg-elevated)' }}>
                     {i.name}
                   </option>
                 ))}
@@ -173,7 +173,7 @@ export function ComparePage() {
       </div>
 
       {/* Comparison chart */}
-      <div className="reveal glass-card rounded-3xl p-6 mb-6">
+      <div className="glass-card rounded-3xl p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="font-serif font-bold text-lg text-primary">{currentIndicator?.name}</h3>
@@ -198,7 +198,7 @@ export function ComparePage() {
       </div>
 
       {/* Trend comparison */}
-      <div className="reveal glass-card rounded-3xl p-6">
+      <div className="glass-card rounded-3xl p-6">
         <h3 className="font-serif font-bold text-lg text-primary mb-4">Historical Trend Comparison</h3>
         <div style={{ height: 300 }}>
           <ResponsiveTrendChart data={trendData} selected={selected} countries={countries} />
