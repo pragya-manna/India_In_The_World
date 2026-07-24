@@ -1,5 +1,5 @@
 import {
-  AreaChart, Area, LineChart, Line, BarChart, Bar,
+  AreaChart, Area, LineChart, Line, BarChart, Bar, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   RadialBarChart, RadialBar, PolarAngleAxis,
 } from 'recharts';
@@ -149,7 +149,7 @@ export function ComparisonBarChart({
         <Tooltip contentStyle={tooltipStyle} cursor={{ fill: 'rgba(255,255,255,0.05)' }} />
         <Bar dataKey="value" radius={[0, 4, 4, 0]}>
           {data.map((entry, i) => (
-            <Bar key={i} dataKey="value" fill={entry.fill || color} />
+            <Cell key={`${entry.name}-${i}`} fill={entry.fill || color} />
           ))}
         </Bar>
       </BarChart>

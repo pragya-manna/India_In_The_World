@@ -31,14 +31,17 @@ const worldBankIndicatorMap: Record<string, string> = {
   gini: "SI.POV.GINI",
   urbanization_rate: "SP.URB.TOTL.IN.ZS",
   patents_per_million: "IP.PAT.RESD",
-  corruption_control: "CC.EST",
-  rule_of_law: "RL.EST",
-  government_effectiveness: "GE.EST",
-  regulatory_quality: "RQ.EST",
-  political_stability: "PV.EST",
-  voice_accountability: "VA.EST",
+  corruption_control: "GOV_WGI_CC.EST",
+  rule_of_law: "GOV_WGI_RL.EST",
+  government_effectiveness: "GOV_WGI_GE.EST",
+  regulatory_quality: "GOV_WGI_RQ.EST",
+  political_stability: "GOV_WGI_PV.EST",
+  voice_accountability: "GOV_WGI_VA.EST",
   primary_enrollment: "SE.PRM.ENRR",
   education_expenditure: "SE.XPD.TOTL.GD.ZS",
+  hospital_beds: "SH.MED.BEDS.ZS",
+  health_expenditure: "SH.XPD.CHEX.GD.ZS",
+  homicide_rate: "VC.IHR.PSRC.P5",
 };
 
 // ISO2 -> our country ID mapping (most are identical)

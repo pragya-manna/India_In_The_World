@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useRef } from 'react';
 import { ArrowLeft, Plus, X, Trophy } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
@@ -19,24 +19,65 @@ export function ComparePage() {
   const [rankings, setRankings] = useState<Ranking[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<string[]>(['IN', 'US', 'CN']);
-  const [indicatorId, setIndicatorId] = useState<string>('hdi');
+  const [indicatorId, setIndicatorId] = useState<string>('gdp_growth');
   const [showPicker, setShowPicker] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const hasLoadedRankings = useRef(false);
 
   useEffect(() => {
     (async () => {
-      const [{ data: ctrs }, { data: inds }, { data: cats }, { data: ranks }] = await Promise.all([
+      const [{ data: ctrs }, { data: inds }, { data: cats }] = await Promise.all([
         supabase.from('countries').select('*').order('name'),
         supabase.from('indicators').select('*').order('display_order'),
         supabase.from('categories').select('*').order('display_order'),
-        supabase.from('rankings').select('*').in('country_id', selected),
       ]);
+
       setCountries(ctrs || []);
       setIndicators(inds || []);
       setCategories(cats || []);
-      setRankings(ranks || []);
-      setLoading(false);
     })();
-  }, [selected]);   // <-- changed from []
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadRankings = async () => {
+      // Show the skeleton only when the page opens for the first time.
+      if (hasLoadedRankings.current) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
+
+      setLoadError(null);
+
+      const { data, error } = await supabase
+        .from('rankings')
+        .select('*')
+        .eq('indicator_id', indicatorId)
+        .in('country_id', selected);
+
+      if (cancelled) return;
+
+      if (error) {
+        setLoadError(error.message);
+        setRankings([]);
+      } else {
+        setRankings(data || []);
+      }
+
+      setLoading(false);
+      setRefreshing(false);
+      hasLoadedRankings.current = true;
+    };
+
+    void loadRankings();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [selected, indicatorId]);
 
   const currentIndicator = indicators.find((i) => i.id === indicatorId);
   const currentCategory = categories.find((c) => c.id === currentIndicator?.category_id);
@@ -97,6 +138,15 @@ export function ComparePage() {
         </h1>
         <p className="text-secondary">Compare India with any country across any indicator.</p>
       </div>
+      {loadError && (
+        <div className="mb-6 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-600">
+          Could not load comparison data: {loadError}
+        </div>
+      )}
+
+      {refreshing && (
+        <p className="mb-4 text-xs text-muted">Updating comparison data…</p>
+      )}
 
       {/* Selected countries */}
       <div className="flex flex-wrap items-center gap-2 mb-6">
@@ -185,8 +235,12 @@ export function ComparePage() {
 
         {/* Rank table */}
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-          {comparisonData
-            .sort((a, b) => (currentIndicator?.higher_is_better ? b.value - a.value : a.value - b.value))
+          {[...comparisonData]
+            .sort((a, b) => (
+              currentIndicator?.higher_is_better
+                ? b.value - a.value
+                : a.value - b.value
+            ))
             .map((d, i) => (
               <div key={i} className="glass rounded-xl p-3 text-center">
                 <div className="text-xs text-muted mb-1">{d.name}</div>

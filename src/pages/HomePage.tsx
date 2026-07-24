@@ -106,7 +106,7 @@ export function HomePage() {
               <h3 className="font-serif font-bold text-primary mb-1">Human Development Index</h3>
               <p className="text-xs text-muted mb-4">UNDP score (0-1)</p>
               <TrendChart
-                data={rankings.filter((r) => r.indicator_id === 'hdi' && r.country_id === 'IN')}
+                data={rankings.filter((r) => r.indicator_id === 'rule_of_law' && r.country_id === 'IN')}
                 color="#3b82f6"
                 height={140}
               />
@@ -120,7 +120,7 @@ export function HomePage() {
               <h3 className="font-serif font-bold text-primary mb-1">Corruption Perceptions</h3>
               <p className="text-xs text-muted mb-4">Transparency International</p>
               <TrendChart
-                data={rankings.filter((r) => r.indicator_id === 'corruption_perceptions' && r.country_id === 'IN')}
+                data={rankings.filter((r) => r.indicator_id === 'corruption_control' && r.country_id === 'IN')}
                 color="#138808"
                 height={140}
               />
@@ -143,7 +143,7 @@ export function HomePage() {
         </div>
       </section>
 
-{/* AI Insights */}
+      {/* AI Insights */}
       {!loading && <AIInsights insights={insights} indicators={indicators} categories={categories} />}
 
       {/* CTA */}
