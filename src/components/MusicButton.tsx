@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X, Music, Volume2, VolumeX } from 'lucide-react';
+import { createPortal } from 'react-dom';
 
 interface MusicPopupProps {
   onClose: () => void;
@@ -46,7 +47,6 @@ function MusicPopup({ onClose }: MusicPopupProps) {
         <h2 className="text-2xl font-serif font-bold text-center text-primary mb-1">
           Vande Mataram
         </h2>
-        <p className="text-muted text-center text-sm mb-6">National Song of India</p>
 
         {/* Waveform visualization */}
         <div className="flex items-center justify-center gap-1 h-12 mb-6">
@@ -110,7 +110,7 @@ export function MusicButton() {
         <Music size={16} />
         <span className="hidden sm:inline">Vande Mataram</span>
       </button>
-      {open && <MusicPopup onClose={() => setOpen(false)} />}
+      {open && createPortal(<MusicPopup onClose={() => setOpen(false)} />, document.body)}
     </>
   );
 }
