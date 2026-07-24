@@ -20,57 +20,57 @@ Deno.serve(async (req: Request) => {
   try {
     const { prompt, indicator_id, category_id, insight_type, save } = await req.json();
 
-    // Gather context data from the database
     let context = "";
 
-    if (indicator_id) {
-      const { data: indicator } = await supabase
-        .from("indicators")
-        .select("*, categories(*)")
-        .eq("id", indicator_id)
-        .maybeSingle();
+    // Fetch live India data for every dashboard indicator.
+    const { data: allIndicators, error: indicatorsError } = await supabase
+      .from("indicators")
+      .select("id, name, unit, category_id, categories(name)")
+      .order("display_order");
 
-      const { data: rankings } = await supabase
-        .from("rankings")
-        .select("*, countries(name, flag_emoji)")
-        .eq("indicator_id", indicator_id)
-        .order("year", { ascending: false });
+    if (indicatorsError) throw indicatorsError;
 
-      const { data: sources } = await supabase
-        .from("sources")
-        .select("*")
-        .eq("indicator_id", indicator_id);
+    const indicatorIds = (allIndicators || []).map((indicator) => indicator.id);
 
-      context = `Indicator: ${indicator?.name} (${indicator?.unit})
-Category: ${indicator?.categories?.name}
-Description: ${indicator?.description}
-Higher is better: ${indicator?.higher_is_better}
+    const { data: indiaRankings, error: rankingsError } = await supabase
+      .from("rankings")
+      .select("indicator_id, year, value, rank")
+      .eq("country_id", "IN")
+      .in("indicator_id", indicatorIds)
+      .order("year", { ascending: false });
 
-Rankings data:
-${(rankings || []).slice(0, 50).map((r) => `${r.year} | ${r.countries?.name} | Value: ${r.value} | Rank: ${r.rank}`).join("\n")}
+    if (rankingsError) throw rankingsError;
 
-Sources:
-${(sources || []).map((s) => `${s.organization} - ${s.report_name} (${s.url})`).join("\n")}
-`;
-    } else if (category_id) {
-      const { data: category } = await supabase
-        .from("categories")
-        .select("*")
-        .eq("id", category_id)
-        .maybeSingle();
+    // If the request is for a specific category or indicator,
+    // restrict the AI context to that selection. Otherwise, send all dashboard data.
+    const scopedIndicators = (allIndicators || []).filter((indicator) => {
+      if (indicator_id) return indicator.id === indicator_id;
+      if (category_id) return indicator.category_id === category_id;
+      return true;
+    });
 
-      const { data: indicators } = await supabase
-        .from("indicators")
-        .select("*")
-        .eq("category_id", category_id);
+    const rankingsByIndicator = new Map<string, typeof indiaRankings>();
 
-      context = `Category: ${category?.name}
-Description: ${category?.description}
-
-Indicators in this category:
-${(indicators || []).map((i) => `- ${i.name} (${i.unit})`).join("\n")}
-`;
+    for (const ranking of indiaRankings || []) {
+      const current = rankingsByIndicator.get(ranking.indicator_id) || [];
+      current.push(ranking);
+      rankingsByIndicator.set(ranking.indicator_id, current);
     }
+
+    context = scopedIndicators.map((indicator) => {
+      const records = (rankingsByIndicator.get(indicator.id) || [])
+        .sort((a, b) => b.year - a.year)
+        .slice(0, 3);
+
+      const history = records.length
+        ? records.map((record) =>
+          `${record.year}: value ${record.value ?? "unavailable"}, rank ${record.rank ? `#${record.rank}` : "unavailable"
+          }`
+        ).join(" | ")
+        : "No India data available";
+
+      return `${indicator.categories?.name || "Uncategorized"} — ${indicator.name} (${indicator.unit}): ${history}`;
+    }).join("\n");
 
     let content: string;
 
@@ -78,8 +78,19 @@ ${(indicators || []).map((i) => `- ${i.name} (${i.unit})`).join("\n")}
       const systemPrompt = `You are a helpful AI assistant for the India in the World Dashboard.
 Answer the user's question directly and clearly.
 You can answer general questions about India and the world, as well as questions based on dashboard data.
-Use supplied dashboard data when relevant.
-Never invent exact rankings, dates, or statistics when data was not provided.`;
+Use the supplied live India dashboard data as the primary source of truth.
+If a requested metric has no data, clearly say that it is unavailable.
+Do not invent statistics, rankings, years, trends, or comparisons.
+Never invent exact rankings, dates, or statistics when data was not provided.
+Format all answers as clean Markdown for a dashboard interface.
+For reports:
+- Start with ## Report Title
+- Use ### for sections
+- Use - for concise bullet points
+- Use bold only for metric names
+- Keep paragraphs short
+- Do not output raw HTML
+- Do not use more than 450 words `;
 
       const userPrompt = `Question: ${prompt}
 

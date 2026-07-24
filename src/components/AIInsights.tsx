@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { Sparkles, Send, Bot, User, FileText, TrendingUp, Lightbulb } from 'lucide-react';
 import type { AIInsight, Indicator, Category } from '@/lib/supabase';
 import { useMagneticButton } from '@/hooks/useAnimations';
+import ReactMarkdown from 'react-markdown';
 
 interface AIInsightsProps {
   insights: AIInsight[];
@@ -14,7 +15,7 @@ export function AIInsights({ insights, indicators, categories }: AIInsightsProps
     {
       role: 'ai',
       content:
-        "Namaste! I'm your AI insights assistant. Ask me about India's rankings, trends, or request an annual report card. Try: 'How is India doing on innovation?' or 'Generate a report card for Economy'.",
+        "Namaste! I'm Bharat AI, your India data assistant. Ask me about India's rankings, trends, or request an annual report card.",
     },
   ]);
   const [input, setInput] = useState('');
@@ -23,59 +24,58 @@ export function AIInsights({ insights, indicators, categories }: AIInsightsProps
   useMagneticButton(sendRef);
 
   const handleSend = async () => {
-  if (!input.trim() || loading) return;
+    if (!input.trim() || loading) return;
 
-  const userMsg = input.trim();
-  setMessages((messages) => [
-    ...messages,
-    { role: 'user', content: userMsg },
-  ]);
-  setInput('');
-  setLoading(true);
+    const userMsg = input.trim();
+    setMessages((messages) => [
+      ...messages,
+      { role: 'user', content: userMsg },
+    ]);
+    setInput('');
+    setLoading(true);
 
-  try {
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    try {
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-    const apiResponse = await fetch(
-      `${supabaseUrl}/functions/v1/ai-insights`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${anonKey}`,
-        },
-        body: JSON.stringify({
-          prompt: userMsg,
-          save: false,
-        }),
+      const apiResponse = await fetch(
+        `${supabaseUrl}/functions/v1/ai-insights`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${anonKey}`,
+          },
+          body: JSON.stringify({
+            prompt: userMsg,
+            save: false,
+          }),
+        }
+      );
+
+      const data = await apiResponse.json();
+
+      if (!apiResponse.ok) {
+        throw new Error(data.error || `HTTP ${apiResponse.status}`);
       }
-    );
 
-    const data = await apiResponse.json();
-
-    if (!apiResponse.ok) {
-      throw new Error(data.error || `HTTP ${apiResponse.status}`);
+      setMessages((messages) => [
+        ...messages,
+        { role: 'ai', content: data.content || 'No answer received.' },
+      ]);
+    } catch (error) {
+      setMessages((messages) => [
+        ...messages,
+        {
+          role: 'ai',
+          content: `Sorry, I could not get an answer: ${error instanceof Error ? error.message : 'Unknown error'
+            }`,
+        },
+      ]);
+    } finally {
+      setLoading(false);
     }
-
-    setMessages((messages) => [
-      ...messages,
-      { role: 'ai', content: data.content || 'No answer received.' },
-    ]);
-  } catch (error) {
-    setMessages((messages) => [
-      ...messages,
-      {
-        role: 'ai',
-        content: `Sorry, I could not get an answer: ${
-          error instanceof Error ? error.message : 'Unknown error'
-        }`,
-      },
-    ]);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <section className="py-20 px-4 max-w-screen-xl mx-auto">
@@ -97,8 +97,8 @@ export function AIInsights({ insights, indicators, categories }: AIInsightsProps
         <div className="lg:col-span-2 glass-card rounded-3xl p-6 flex flex-col" style={{ minHeight: '500px' }}>
           <div className="flex items-center gap-2 mb-4 pb-4 border-b" style={{ borderColor: 'var(--glass-border)' }}>
             <Bot size={20} className="text-saffron-500" />
-            <h3 className="font-serif font-bold text-primary">AI Assistant</h3>
-            <span className="ml-auto text-xs text-muted">Powered by AI</span>
+            <h3 className="font-serif font-bold text-primary">Bharat AI</h3>
+            <span className="ml-auto text-xs text-muted">India's Data Assistant</span>
           </div>
 
           <div className="flex-1 overflow-y-auto space-y-4 mb-4 pr-2" style={{ maxHeight: '380px' }}>
@@ -114,13 +114,44 @@ export function AIInsights({ insights, indicators, categories }: AIInsightsProps
                   {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                 </div>
                 <div
-                  className={`max-w-md rounded-2xl px-4 py-3 text-sm whitespace-pre-wrap ${msg.role === 'user'
-                      ? 'bg-saffron-500/20 text-primary rounded-tr-sm'
-                      : 'glass text-secondary rounded-tl-sm'
+                  className={`max-w-md rounded-2xl px-4 py-3 text-sm ${msg.role === 'user'
+                    ? 'bg-saffron-500/20 text-primary rounded-tr-sm'
+                    : 'glass text-secondary rounded-tl-sm'
                     }`}
                   style={msg.role === 'ai' ? { borderColor: 'var(--glass-border)' } : undefined}
                 >
-                  {msg.content}
+                  {msg.role === 'ai' ? (
+                    <ReactMarkdown
+                      components={{
+                        h1: ({ children }) => (
+                          <h1 className="mb-3 text-xl font-serif font-bold text-primary">{children}</h1>
+                        ),
+                        h2: ({ children }) => (
+                          <h2 className="mb-3 mt-5 text-lg font-serif font-bold text-primary">{children}</h2>
+                        ),
+                        h3: ({ children }) => (
+                          <h3 className="mb-2 mt-4 text-base font-semibold text-primary">{children}</h3>
+                        ),
+                        p: ({ children }) => (
+                          <p className="mb-3 leading-6 text-secondary">{children}</p>
+                        ),
+                        ul: ({ children }) => (
+                          <ul className="mb-3 list-disc space-y-1 pl-5 text-secondary">{children}</ul>
+                        ),
+                        ol: ({ children }) => (
+                          <ol className="mb-3 list-decimal space-y-1 pl-5 text-secondary">{children}</ol>
+                        ),
+                        li: ({ children }) => <li>{children}</li>,
+                        strong: ({ children }) => (
+                          <strong className="font-semibold text-primary">{children}</strong>
+                        ),
+                      }}
+                    >
+                      {msg.content}
+                    </ReactMarkdown>
+                  ) : (
+                    msg.content
+                  )}
                 </div>
               </div>
             ))}
