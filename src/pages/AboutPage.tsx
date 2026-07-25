@@ -37,7 +37,7 @@ const pillars = [
     },
 ];
 
-const sources = ['World Bank', 'United Nations', 'World Health Organization', 'IMF'];
+const sources = ['World Bank'];
 
 // Local photos — files live in public/images/about/
 const gallery = [
