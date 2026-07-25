@@ -301,6 +301,3 @@ This project is intended for educational and hackathon purposes.
 ### ⭐ If you found this project interesting, consider giving it a Star!
 
 </div>
-
-
-Hackathon Project In Progress
