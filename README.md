@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🇮🇳 India in the World
+# <img src="https://upload.wikimedia.org/wikipedia/en/4/41/Flag_of_India.svg" width="35"> India in the World
 
 ### *Exploring India's Global Progress Through Data & AI*
 
