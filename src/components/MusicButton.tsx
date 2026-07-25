@@ -84,7 +84,7 @@ function MusicPopup({ onClose }: MusicPopupProps) {
 
         {playing && (
           <audio autoPlay loop>
-            <source src="/public/audio/vande_mataram.mp3" type="audio/mpeg" />
+            <source src="/audio/vande_mataram.mp3" type="audio/mpeg" />
           </audio>
         )}
       </div>
