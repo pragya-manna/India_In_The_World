@@ -3,13 +3,14 @@ import { Link, useLocation } from 'react-router-dom';
 import {
   Globe, Sun, Moon, Search, Bell, Menu, X,
   TrendingUp, Users, Landmark, Cpu, GraduationCap,
-  HeartPulse, Leaf, Shield, Scale, LayoutDashboard, Database,
+  HeartPulse, Leaf, Shield, Scale, LayoutDashboard, Database, Info,
 } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import { MusicButton } from '@/components/MusicButton';
 
 const navLinks = [
   { label: 'Dashboard', href: '/', icon: LayoutDashboard },
+  { label: 'About', href: '/about', icon: Info },
   { label: 'Compare', href: '/compare', icon: Globe },
   { label: 'Economy', href: '/category/economy', icon: TrendingUp },
   { label: 'Society', href: '/category/society', icon: Users },

@@ -10,6 +10,7 @@ import { CategoryPage } from '@/pages/CategoryPage';
 import { ComparePage } from '@/pages/ComparePage';
 import { InsightsPage } from '@/pages/InsightsPage';
 import { DataPage } from '@/pages/DataPage';
+import AboutPage from './pages/AboutPage';
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -25,6 +26,7 @@ function AnimatedRoutes() {
         <Routes location={location}>
           <Route path="/" element={<HomePage />} />
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/compare" element={<ComparePage />} />
           <Route path="/insights" element={<InsightsPage />} />
