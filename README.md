@@ -15,6 +15,12 @@ Interactive dashboard powered by **World Bank data**, featuring country comparis
 
 <br>
 
+<div align="center">
+
+🏆 **Awarded 5th Place** in the **Let's Code Development Challenge 2026**
+
+</div>
+
 <br>
 
 🌐 **Live Demo:** https://indiaintheworld.netlify.app/
